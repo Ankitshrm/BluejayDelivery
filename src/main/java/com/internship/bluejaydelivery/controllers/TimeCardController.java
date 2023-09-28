@@ -31,28 +31,22 @@ public class TimeCardController {
         return ResponseEntity.badRequest().body("Please upload excel file");
     }
 
-    @GetMapping("/employees/longshift")
-    public ResponseEntity<List<EmployeeInfo>> getEmployeesWithLongShift() {
-        List<EmployeeInfo> employees = this.timeCardService.findEmployeesWithMoreThan14Hours();
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+    @GetMapping("/consecutive-workdays")
+    public List<EmployeeInfo> getEmployeesWith7ConsecutiveWorkdays() {
+        List<EmployeeInfo> employeesWith7ConsecutiveWorkdays = this.timeCardService.findEmployeesWith7ConsecutiveDays();
+        return employeesWith7ConsecutiveWorkdays;
     }
 
-    @GetMapping("/employees/shortbreaks")
+    @GetMapping("/employees/resting-less10hours-more1hour")
     public ResponseEntity<List<EmployeeInfo>> getEmployeesWithShortBreaks() {
         List<EmployeeInfo> employees = this.timeCardService.findEmployeesWithShortBreaks();
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
-    @GetMapping("/employees/second10")
-    public ResponseEntity<List<EmployeeInfo>> getEmployeesWithLongBreaks() {
-        List<EmployeeInfo> employees = this.timeCardService.findEmployeesWithMoreThan10Hours();
+    @GetMapping("/employees/working-above14hours")
+    public ResponseEntity<List<EmployeeInfo>> getEmployeesWithLongShift() {
+        List<EmployeeInfo> employees = this.timeCardService.findEmployeesWithMoreThan14Hours();
         return new ResponseEntity<>(employees, HttpStatus.OK);
-    }
-
-    @GetMapping("/consecutive-workdays")
-    public List<EmployeeInfo> getEmployeesWith7ConsecutiveWorkdays() {
-        List<EmployeeInfo> employeesWith7ConsecutiveWorkdays = this.timeCardService.findEmployeesWith7ConsecutiveDays();
-        return employeesWith7ConsecutiveWorkdays;
     }
 
     @GetMapping

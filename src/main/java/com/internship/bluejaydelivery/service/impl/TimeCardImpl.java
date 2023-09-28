@@ -44,39 +44,6 @@ public class TimeCardImpl implements TimeCardService {
         return this.timeCardRepo.findAll();
     }
 
-    @Override
-    public List<EmployeeInfo> findEmployeesWithMoreThan10Hours() {
-        List<TimeCard> allTimeCards = this.timeCardRepo.findAll();
-        List<TimeCard> validTimeCards = allTimeCards.stream()
-                .filter(timeCard -> timeCard.getTime() != null && !timeCard.getTime().isEmpty() &&
-                        timeCard.getTimeOut() !=null && !timeCard.getTimeOut().isEmpty())
-                .collect(Collectors.toList());
-        validTimeCards.sort(Comparator.comparing(TimeCard::getEmployeeName).thenComparing(TimeCard::getTime));
-        List<EmployeeInfo> result = new ArrayList<>();
-        for (int i = 0; i < validTimeCards.size() - 1; i++) {
-            TimeCard current = validTimeCards.get(i);
-            TimeCard next = validTimeCards.get(i + 1);
-
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a");
-            LocalDate currentDate = LocalDate.parse(current.getTime(), dateFormat);
-            LocalDate nextDate = LocalDate.parse(next.getTime(), dateFormat);
-            LocalDate checkNextDate =currentDate.plusDays(1);
-            if(checkNextDate.equals(nextDate)){
-                if (current.getEmployeeName().equals(next.getEmployeeName())) {
-                    if(findDiffercence(current.getTimeOut(),next.getTime())){
-                        EmployeeInfo emp = new EmployeeInfo();
-                        emp.setId(current.getId());
-                        emp.setEmployeeName(current.getEmployeeName());
-                        emp.setPositionId(current.getPositionID());
-                        result.add(emp);
-                    }
-                }
-            }
-
-        }
-        return result;
-
-    }
 
     @Override
     public List<EmployeeInfo> findEmployeesWithShortBreaks() {
@@ -112,31 +79,6 @@ public class TimeCardImpl implements TimeCardService {
         }
 
         return result;
-    }
-
-    private boolean findDiffercence(String timeOut, String time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-        String differenceFormat="";
-        try {
-            Date time1 = dateFormat.parse(timeOut);
-            Date time2 = dateFormat.parse(time);
-
-            long durationInMillis = time2.getTime() - time1.getTime();
-            long minutesDifference = TimeUnit.MILLISECONDS.toMinutes(durationInMillis);
-            long hours = minutesDifference / 60;
-            long minutes = minutesDifference % 60;
-            differenceFormat = String.format("%d:%02d", hours, minutes);
-
-            if (hours < 10 || (hours == 10 && minutes <= 0)) {
-                if (hours > 1 || (hours == 1 && minutes > 0)) {
-                    return true;
-                }
-            }
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
 
@@ -211,4 +153,32 @@ public class TimeCardImpl implements TimeCardService {
         }
         return employeesWithMoreThan14Hours;
     }
+
+
+
+    private boolean findDiffercence(String timeOut, String time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+        String differenceFormat="";
+        try {
+            Date time1 = dateFormat.parse(timeOut);
+            Date time2 = dateFormat.parse(time);
+
+            long durationInMillis = time2.getTime() - time1.getTime();
+            long minutesDifference = TimeUnit.MILLISECONDS.toMinutes(durationInMillis);
+            long hours = minutesDifference / 60;
+            long minutes = minutesDifference % 60;
+            differenceFormat = String.format("%d:%02d", hours, minutes);
+
+            if (hours < 10 || (hours == 10 && minutes <= 0)) {
+                if (hours > 1 || (hours == 1 && minutes > 0)) {
+                    return true;
+                }
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

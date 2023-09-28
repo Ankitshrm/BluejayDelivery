@@ -17,8 +17,6 @@ public interface TimeCardService {
 
     List<EmployeeInfo> findEmployeesWith7ConsecutiveDays();
 
-    List<EmployeeInfo> findEmployeesWithMoreThan10Hours();
-
 
 
 }
